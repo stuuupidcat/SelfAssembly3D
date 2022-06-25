@@ -7,6 +7,26 @@
 #include <fstream>
 #include <string>
 
+#include "agent.h"
+
+/*
+       ____________________
+    z /                   /|
+     /___________________/ |
+    | (0,0,0) | (0,1,0)  | | 
+    | (1,0,0) |          | |
+    |                    | |
+ x  |                    | |
+    |                    | |
+    |                    | |
+    |                    | |
+    |                    | /
+    |_____________________/
+
+               y
+*/
+
+
 
 //declarement
 class GridEnvironment;
@@ -45,10 +65,15 @@ public:
     bool is_target;
 
     //whether the grid is currently occupied by an agent.
-    bool is_currently_occupied;
+    bool is_occupied;
+    Agent* occupied_by;
 
     //lock.
     bool is_locked;
+
+    //the light intensity of the grid.
+    double blue_intensity;
+    double red_intensity;
 
     Grid();
 

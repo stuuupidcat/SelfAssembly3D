@@ -1,5 +1,4 @@
 #include "grid.h"
-
 // class GridEnvironment
 
 // the random constructor.
@@ -107,6 +106,9 @@ GridEnvironment::GridEnvironment(std::string filename) {
 // class Grid
 Grid::Grid() {
     is_target = false;
-    is_currently_occupied = false;
+    is_occupied = false;
+    occupied_by = nullptr;
     is_locked = false;
+    blue_intensity = 0;
+    red_intensity = 0;
 };

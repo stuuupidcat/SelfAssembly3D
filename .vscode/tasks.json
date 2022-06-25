@@ -1,0 +1,9 @@
+{
+    "tasks": [
+       {
+          "label": "cmake",
+          "command":"cmake",
+       }
+      ],
+    "version": "2.0.0"
+}

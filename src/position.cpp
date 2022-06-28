@@ -10,6 +10,10 @@ Position Position::operator+ (const Position &p) const {
     return Position(x + p.x, y + p.y, z + p.z);
 }
 
+bool Position::operator== (const Position &p) const {
+    return x == p.x && y == p.y && z == p.z;
+}
+
 double chebyshev_distance(Position &p1, Position &p2) {
     double dx = abs(p1.x - p2.x);
     double dy = abs(p1.y - p2.y);  

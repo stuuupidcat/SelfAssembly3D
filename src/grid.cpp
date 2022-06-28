@@ -110,3 +110,9 @@ Grid::Grid() {
     is_occupied = false;
     is_locked = false;
 };
+
+Grid::Grid(Grid&& other) {
+    is_target = other.is_target;
+    is_occupied = other.is_occupied;
+    is_locked = other.is_locked;
+};

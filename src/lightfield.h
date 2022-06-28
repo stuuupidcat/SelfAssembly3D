@@ -17,26 +17,26 @@ public:
     double blue_intensity;
     double red_intensity;
 
-    LightGrid(Position &position, double blue_intensity, double red_intensity);
+    LightGrid(Position position, double blue_intensity, double red_intensity);
     LightGrid() = default;
 };
 
 //compare class for priority queue.
 class BlueDescendCompare {
 public:
-    bool operator() (const LightGrid lg1, const LightGrid lg2);
+    bool operator() (const LightGrid& lg1, const LightGrid& lg2) const;
 };
 
 
 class BlueDescendRedAscendCompare {
 public:
-    bool operator() (const LightGrid lg1, const LightGrid lg2);
+    bool operator() (const LightGrid& lg1, const LightGrid& lg2) const;
 };
 
 
 class RedAscendCompare {
 public:
-    bool operator() (const LightGrid lg1, const LightGrid lg2);
+    bool operator() (const LightGrid& lg1, const LightGrid& lg2) const;
 };
 
 

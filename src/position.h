@@ -13,6 +13,7 @@ public:
     Position() = default;
 
     Position operator+ (const Position &p) const;
+    bool operator== (const Position &p) const;
 };
 
 

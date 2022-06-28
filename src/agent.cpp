@@ -2,20 +2,22 @@
 
 //the constructor.
 Agent::Agent() {
+    id = 0;
     position = Position(0, 0, 0);
     is_in_target = false;
 }
 
-
-//move the agent to a new position.
-void Agent::move_to(int nx, int ny, int nz) {
-    if (nx == position.x && ny == position.y && nz == position.z) {
-        return;
-    }
-    else {
-        path.push_back(position);
-        position.x = nx;
-        position.y = ny;
-        position.z = nz;
+void Agent::output_action() {
+    std::cout << "Agent " << id << ": ";
+    if (actions[actions.size() - 1] == 0) {
+        std::cout << "stay at " << 
+            "(" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
+    } else {
+        auto last_position = path[path.size() - 1];
+        std::cout << "move from" << 
+            "(" << last_position.x << ", " << last_position.y << ", " << last_position.z << ")" <<
+            " to " <<
+            "(" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
     }
 }
+

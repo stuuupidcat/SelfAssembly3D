@@ -7,8 +7,8 @@
 
 
 int main() {
-    //GridEnvironment grid_env("data/grid.txt");
-    GridEnvironment grid_env(16,16,16,200);
+    GridEnvironment grid_env("data/grid.txt");
+    //GridEnvironment grid_env(16,16,16,200);
     Coordinator coordinator(grid_env);     
     coordinator.simulate();    
 }

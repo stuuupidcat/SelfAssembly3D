@@ -28,9 +28,6 @@ public:
     //contains a grid environment.
     GridEnvironment &grid_env;
 
-    //how many agents are in the target shape.
-    int agent_in_target_num;
-
     //a bunch of agents.
     std::vector<Agent> agents;
 
@@ -49,8 +46,12 @@ public:
     //calculate the light intensity, p.25 of the paper.
     //"At any time t, each agent in O_t is a source of red light,
     // and each grid in U_t is a source of blue light. "
-    double L, beta, omega, gamma;
+    double L, beta, omega, W, gamma;
     bool flag;
+
+    //calculate the portion of the occupied grid in the target shape.
+    void calculate_W();
+
     void calculate_light();
 
     //show the light field.
@@ -59,8 +60,16 @@ public:
     //push legal light grids into the priority queues.
     void generate_priority_queues(Agent &agent);
 
-    //the mutex lock of the grid;
-    std::vector<std::vector<std::vector<std::mutex>>> grid_mutex;
+    //choose next position in multi-thread.
+    template<typename T>
+    void choose_next_position(Agent &agent, T &queue);
+
+    //move to next position or stay.
+    void move_to_next_position(Agent &agent);
+
+    //change state of grid.
+    void change_grid_state();
+
 
     //simulate.
     void simulate();

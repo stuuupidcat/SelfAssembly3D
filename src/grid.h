@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <thread>
+#include <mutex>
 
 #include "time.h"
 
@@ -36,9 +38,11 @@ public:
     bool is_occupied;
 
     //lock.
+    std::mutex lock;
     bool is_locked;
 
     Grid();
+    Grid(Grid&&);
 
 };
 

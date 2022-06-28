@@ -15,9 +15,14 @@
 
 class Agent {
 public:
+    int id;
+    
     //the coordinate of the agent.
-    Position position;
+    Position position, next_position;
+
     std::vector<Position> path;
+    //0 for stay and 1 for move.
+    std::vector<bool> actions;
 
     //whether the agent is in the target shape.
     bool is_in_target;
@@ -30,11 +35,11 @@ public:
     std::priority_queue<LightGrid, std::vector<LightGrid>, BlueDescendRedAscendCompare> bd_ra_queue;
     std::priority_queue<LightGrid, std::vector<LightGrid>, RedAscendCompare> ra_queue;
 
-    //move the agent to a new position.
-    void move_to(int nx, int ny, int nz);
-
     //the constructor.
     Agent();
+
+    //output last action
+    void output_action();
 };
 
 #endif

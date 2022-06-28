@@ -9,8 +9,7 @@ Windows + CMake + GCC 8.10 x86_64-w64-mingw32
 `./build/SelfAssembly 输入文件 输出文件`
 
 ## 输入文件格式
-grid_size_x grid_size_y grid_size_z agent_num
-输入的0、1矩阵
+`grid_size_x` `grid_size_y` `grid_size_z` `agent_num` `0-1 matrix`
 > 输入矩阵的坐标轴在方向在文件`grid.h`中有说明。
 
 ## 输出文件

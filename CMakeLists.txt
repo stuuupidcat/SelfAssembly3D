@@ -5,5 +5,6 @@ add_executable(SelfAssembly main.cpp
                             src/grid.cpp
                             src/agent.cpp
                             src/coordinator.cpp
-                            src/compare.cpp)
+                            src/lightfield.cpp
+                            src/position.cpp)
 

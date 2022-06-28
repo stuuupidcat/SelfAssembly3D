@@ -3,6 +3,7 @@
 
 // the random constructor.
 GridEnvironment::GridEnvironment(int grid_size_x, int grid_size_y, int grid_size_z, int target_shape_num) {
+    srand(5);
     //initialize the grid.
     this->grid_size_x = grid_size_x;
     this->grid_size_y = grid_size_y;
@@ -107,8 +108,5 @@ GridEnvironment::GridEnvironment(std::string filename) {
 Grid::Grid() {
     is_target = false;
     is_occupied = false;
-    occupied_by = nullptr;
     is_locked = false;
-    blue_intensity = 0;
-    red_intensity = 0;
 };

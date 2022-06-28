@@ -1,0 +1,25 @@
+CMakeFiles/SelfAssembly.dir/src/position.cpp.obj: \
+ D:\Workspace\workspace_c++\selfassembly\src\position.cpp \
+ D:\Workspace\workspace_c++\selfassembly\src\position.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/cmath \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/x86_64-w64-mingw32/bits/c++config.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/x86_64-w64-mingw32/bits/os_defines.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/x86_64-w64-mingw32/bits/cpu_defines.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/bits/cpp_type_traits.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/ext/type_traits.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/math.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/crtdefs.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/_mingw.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/_mingw_mac.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/_mingw_secapi.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/vadefs.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/sdks/_mingw_directx.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/bits/std_abs.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/stdlib.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed/limits.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed/syslimits.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/limits.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
+ D:/Software/Mingw/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/stdlib.h \
+ D:/Software/Mingw/mingw64/x86_64-w64-mingw32/include/malloc.h

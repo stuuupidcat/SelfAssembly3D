@@ -7,7 +7,7 @@
 #include <fstream>
 #include <string>
 
-#include "agent.h"
+#include "time.h"
 
 /*
        ____________________
@@ -27,10 +27,20 @@
 */
 
 
+class Grid {
+public:
+    //whether the grid is part of the target shape;
+    bool is_target;
 
-//declarement
-class GridEnvironment;
-class Grid;
+    //whether the grid is currently occupied by an agent.
+    bool is_occupied;
+
+    //lock.
+    bool is_locked;
+
+    Grid();
+
+};
 
 class GridEnvironment {
 public:
@@ -56,27 +66,6 @@ public:
 
     //load a grid from a file.
     GridEnvironment(std::string filename);
-};
-
-
-class Grid {
-public:
-    //whether the grid is part of the target shape;
-    bool is_target;
-
-    //whether the grid is currently occupied by an agent.
-    bool is_occupied;
-    Agent* occupied_by;
-
-    //lock.
-    bool is_locked;
-
-    //the light intensity of the grid.
-    double blue_intensity;
-    double red_intensity;
-
-    Grid();
-
 };
 
 #endif // GRID_H

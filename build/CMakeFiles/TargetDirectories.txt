@@ -1,3 +1,0 @@
-D:/Workspace/workspace_c++/selfassembly/build/CMakeFiles/SelfAssembly.dir
-D:/Workspace/workspace_c++/selfassembly/build/CMakeFiles/edit_cache.dir
-D:/Workspace/workspace_c++/selfassembly/build/CMakeFiles/rebuild_cache.dir

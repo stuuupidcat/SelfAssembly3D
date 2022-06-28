@@ -1,3 +1,0 @@
-D:\Software\CMake\bin\cmake.exe -E rm -f CMakeFiles\SelfAssembly.dir/objects.a
-D:\Software\Mingw\mingw64\bin\ar.exe qc CMakeFiles\SelfAssembly.dir/objects.a @CMakeFiles\SelfAssembly.dir\objects1.rsp
-D:\Software\Mingw\mingw64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\SelfAssembly.dir/objects.a -Wl,--no-whole-archive -o SelfAssembly.exe -Wl,--out-implib,libSelfAssembly.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\SelfAssembly.dir\linklibs.rsp

@@ -260,7 +260,7 @@ void Coordinator::choose_next_position(Agent &agent, T& q) {
                 }
 
                 //generate a random number between [0, 1], to compare with the omega;
-                double p = rand() / (double)RAND_MAX;
+                double p = (rand() % 11)/10.0;
                 if (p < omega) {
                     candidate_pos = top.position;
                     continue;
@@ -333,19 +333,26 @@ void Coordinator::simulate() {
     while (true) {
         std::cout << "----------------------" << std::endl;
         std::cout << "time step: " << time_step << std::endl;
-        show_grid();
+        std::cout << "----------------------" << std::endl;
         calculate_W();
-        std::cout << "occupancy: %" << std::fixed << std::setprecision(3) << W * 100 << std::endl; 
+        std::cout << "occupancy: %" << std::fixed << std::setprecision(3) << W * 100 << std::endl;
+        //show_grid();
+         
         
         if (fabs(W - 1) < 0.000001) {
             std::cout << "Finish!" << std::endl;
             break;
         }
 
-        calculate_light();
-        for (auto &agent : agents) {     
-            show_light_field(agent);
+        if (time_step > 300) {
+            std::cout << "Time out!" << std::endl;
+            break;
         }
+
+        calculate_light();
+        //for (auto &agent : agents) {     
+        //    show_light_field(agent);
+        //}
         //use multi-thread to generate the priority queues for every agent.
         std::vector<std::thread> threads;
         for (auto &agent : agents) {
@@ -393,9 +400,9 @@ void Coordinator::simulate() {
         change_grid_state();
 
         //output agent's path.
-        for (auto &agent : agents) {
-            agent.output_action();
-        }
+        //for (auto &agent : agents) {
+        //    agent.output_action();
+        //}
 
         //update the time step.
         time_step++;

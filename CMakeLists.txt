@@ -6,5 +6,5 @@ add_executable(SelfAssembly main.cpp
                             src/agent.cpp
                             src/coordinator.cpp
                             src/lightfield.cpp
-                            src/position.cpp)
-
+                            src/position.cpp
+                            src/shape.cpp)

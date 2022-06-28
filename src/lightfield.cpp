@@ -7,15 +7,15 @@ LightGrid::LightGrid(Position position, double blue_intensity, double red_intens
 }
 
 bool BlueDescendCompare::operator() (const LightGrid& lg1, const LightGrid& lg2) const{
-    return lg1.blue_intensity > lg2.blue_intensity;
+    return lg1.blue_intensity < lg2.blue_intensity;
 }
 
 
 bool BlueDescendRedAscendCompare::operator() (const LightGrid& lg1, const LightGrid& lg2) const{
-    if (lg1.blue_intensity > lg2.blue_intensity) {
+    if (lg1.blue_intensity < lg2.blue_intensity) {
         return true;
     } else if (lg1.blue_intensity == lg2.blue_intensity) {
-        return lg1.red_intensity < lg2.red_intensity;
+        return lg1.red_intensity > lg2.red_intensity;
     } else {
         return false;
     }
@@ -23,5 +23,5 @@ bool BlueDescendRedAscendCompare::operator() (const LightGrid& lg1, const LightG
 
 
 bool RedAscendCompare::operator() (const LightGrid& lg1, const LightGrid& lg2) const{
-    return lg1.red_intensity < lg2.red_intensity;
+    return lg1.red_intensity > lg2.red_intensity;
 }

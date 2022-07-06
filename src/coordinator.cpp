@@ -10,7 +10,8 @@ Coordinator::Coordinator(GridEnvironment &grid_env)
                                                 gamma(0.2)
 {
     //set the random seed.
-    srand(time(NULL));
+    //srand(time(NULL));
+    srand(17);
 
     //initialize the agents.
     for (int i = 0; i < agent_num; i++) {
@@ -246,7 +247,7 @@ void Coordinator::choose_next_position(Agent &agent, T& q, bool can_leave_target
                 continue;
             }
             // cannot leave the target shape.
-            else if (!can_leave_target && top_grid.is_in_target) {
+            else if (!can_leave_target && !top_grid.is_target) {
                 top_grid.lock.unlock();
                 continue;
             }
@@ -382,17 +383,17 @@ void Coordinator::simulate() {
             if (!agent.is_in_target) {
                 //choose the bd_queue
                 threads.push_back(std::thread(&Coordinator::choose_next_position<std::priority_queue<LightGrid, std::vector<LightGrid>, BlueDescendCompare>>, 
-                                                 this, std::ref(agent), std::ref(agent.bd_queue)));
+                                                 this, std::ref(agent), std::ref(agent.bd_queue), true));
             }
             else {
                 if (W < 1 - omega) {
                     //choose the bd_ra_queue
                     threads.push_back(std::thread(&Coordinator::choose_next_position<std::priority_queue<LightGrid, std::vector<LightGrid>, BlueDescendRedAscendCompare>>, 
-                                             this, std::ref(agent), std::ref(agent.bd_ra_queue)));
+                                             this, std::ref(agent), std::ref(agent.bd_ra_queue), true));
                 }
                 else {
                     threads.push_back(std::thread(&Coordinator::choose_next_position<std::priority_queue<LightGrid, std::vector<LightGrid>, RedAscendCompare>>, 
-                                             this, std::ref(agent), std::ref(agent.ra_queue)));
+                                             this, std::ref(agent), std::ref(agent.ra_queue), false));
                 }
             }
         }

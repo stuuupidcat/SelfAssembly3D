@@ -60,9 +60,9 @@ public:
     //push legal light grids into the priority queues.
     void generate_priority_queues(Agent &agent);
 
-    //choose next position in multi-thread.
+    //choose next position in multi-thread, delta:the result of current occupancy - (1-omega)
     template<typename T>
-    void choose_next_position(Agent &agent, T &queue, bool can_leave_target);
+    void choose_next_position(Agent &agent, T &queue, double delta);
 
     //move to next position or stay.
     void move_to_next_position(Agent &agent);

@@ -6,12 +6,12 @@ Coordinator::Coordinator(GridEnvironment &grid_env)
                                                 time_step(0), 
                                                 L(1000),
                                                 beta(1),
-                                                omega(0.15),
+                                                omega(0.2),
                                                 gamma(0.2)
 {
     //set the random seed.
-    //srand(time(NULL));
-    srand(17);
+    srand(time(NULL));
+    //srand(17);
 
     //initialize the agents.
     for (int i = 0; i < agent_num; i++) {
@@ -226,7 +226,7 @@ void Coordinator::generate_priority_queues(Agent& agent) {
 }
 
 template <typename T>
-void Coordinator::choose_next_position(Agent &agent, T& q, bool can_leave_target) {
+void Coordinator::choose_next_position(Agent &agent, T& q, double delta) {
     //this function only change the agent's next_position and the grid's is_locked.
     //initialize the light grid
     auto candidate_pos = Position(-1, -1, -1);
@@ -242,16 +242,32 @@ void Coordinator::choose_next_position(Agent &agent, T& q, bool can_leave_target
             q.pop();
             Grid &top_grid = grid_env.grid[top.position.x][top.position.y][top.position.z];
             top_grid.lock.lock();
+
             if (top_grid.is_locked) {
                 top_grid.lock.unlock();
                 continue;
             }
-            // cannot leave the target shape.
-            else if (!can_leave_target && !top_grid.is_target) {
-                top_grid.lock.unlock();
-                continue;
-            }
             else {
+                if (!top_grid.is_target) {
+                    //delta: the result of {current occupancy - (1-omega)}
+                    //when delta < 0, can leave the target;
+                    //when delta > 0 (delta max: omega), 
+                    //the agent can leave the target at a rate of (omega - delta)/alpha.
+                    //e.g. current occupancy = 0.89, omega = 0.15, delta = 0.89 - (1-0.15) = 0.04
+                    //the agent can leave the target at a rate of (0.15 - 0.04)/alpha = 0.11/alpha
+
+                    double alpha = 2;
+                    double dice = (rand() % 1001)/1000.0;
+                    double can_leave_target_rate = (omega - delta)/3;
+                    if (dice > can_leave_target_rate) {
+                        top_grid.lock.unlock();
+                        continue;
+                    }
+                    else {
+                        //try to occupy the grid.
+                    }
+                }
+
                 //change the state of the grid.
                 //when moving, you need to handle other states of the grid.
                 top_grid.is_locked = true;
@@ -358,7 +374,7 @@ void Coordinator::simulate() {
             break;
         }
 
-        if (time_step > 100) {
+        if (time_step > 200) {
             std::cout << "Time out!" << std::endl;
             show_grid();
             break;
@@ -380,20 +396,21 @@ void Coordinator::simulate() {
         //use multi-thread to choose the next position for every agent.
         threads.clear();
         for (auto &agent : agents) {
+            double delta = W - (1-omega);
             if (!agent.is_in_target) {
                 //choose the bd_queue
                 threads.push_back(std::thread(&Coordinator::choose_next_position<std::priority_queue<LightGrid, std::vector<LightGrid>, BlueDescendCompare>>, 
-                                                 this, std::ref(agent), std::ref(agent.bd_queue), true));
+                                                 this, std::ref(agent), std::ref(agent.bd_queue), delta));
             }
             else {
-                if (W < 1 - omega) {
+                if (delta < 0) {
                     //choose the bd_ra_queue
                     threads.push_back(std::thread(&Coordinator::choose_next_position<std::priority_queue<LightGrid, std::vector<LightGrid>, BlueDescendRedAscendCompare>>, 
-                                             this, std::ref(agent), std::ref(agent.bd_ra_queue), true));
+                                             this, std::ref(agent), std::ref(agent.bd_ra_queue), delta));
                 }
                 else {
                     threads.push_back(std::thread(&Coordinator::choose_next_position<std::priority_queue<LightGrid, std::vector<LightGrid>, RedAscendCompare>>, 
-                                             this, std::ref(agent), std::ref(agent.ra_queue), false));
+                                             this, std::ref(agent), std::ref(agent.ra_queue), delta));
                 }
             }
         }

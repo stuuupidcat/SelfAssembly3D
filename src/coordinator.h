@@ -62,7 +62,7 @@ public:
 
     //choose next position in multi-thread.
     template<typename T>
-    void choose_next_position(Agent &agent, T &queue);
+    void choose_next_position(Agent &agent, T &queue, bool can_leave_target);
 
     //move to next position or stay.
     void move_to_next_position(Agent &agent);

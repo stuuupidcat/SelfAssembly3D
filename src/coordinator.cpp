@@ -10,7 +10,7 @@ Coordinator::Coordinator(GridEnvironment &grid_env)
                                                 gamma(0.2)
 {
     //set the random seed.
-    srand(3);
+    srand(time(NULL));
 
     //initialize the agents.
     for (int i = 0; i < agent_num; i++) {
@@ -141,7 +141,7 @@ void Coordinator::calculate_light() {
                             blue_light += L / (1 + beta * blue_distance);
                         }
 
-                        if (agent.is_in_target) {
+                        if (agent.is_in_target) { //
                             for (auto &agent_not_in_target: agents_not_in_target) {
                                 red_distance = chebyshev_distance(pos, agent_not_in_target);
                                 red_light += L / (1 + beta * red_distance);
@@ -225,7 +225,7 @@ void Coordinator::generate_priority_queues(Agent& agent) {
 }
 
 template <typename T>
-void Coordinator::choose_next_position(Agent &agent, T& q) {
+void Coordinator::choose_next_position(Agent &agent, T& q, bool can_leave_target) {
     //this function only change the agent's next_position and the grid's is_locked.
     //initialize the light grid
     auto candidate_pos = Position(-1, -1, -1);
@@ -245,6 +245,11 @@ void Coordinator::choose_next_position(Agent &agent, T& q) {
                 top_grid.lock.unlock();
                 continue;
             }
+            // cannot leave the target shape.
+            else if (!can_leave_target && top_grid.is_in_target) {
+                top_grid.lock.unlock();
+                continue;
+            }
             else {
                 //change the state of the grid.
                 //when moving, you need to handle other states of the grid.
@@ -259,9 +264,9 @@ void Coordinator::choose_next_position(Agent &agent, T& q) {
                     candidate_grid.lock.unlock();
                 }
 
-                //generate a random number between [0, 1], to compare with the omega;
+                //generate a random number between [0, 1], to compare with the gamma.;
                 double p = (rand() % 11)/10.0;
-                if (p < omega) {
+                if (p < gamma) {
                     candidate_pos = top.position;
                     continue;
                 }
@@ -330,22 +335,31 @@ void Coordinator::change_grid_state() {
 
 
 void Coordinator::simulate() {
+    double max_W = 0;
+    //calculate the mean running time of each iteration.
+    double mean_running_time = 0;
     while (true) {
+        double start_time = clock();
         std::cout << "----------------------" << std::endl;
         std::cout << "time step: " << time_step << std::endl;
         std::cout << "----------------------" << std::endl;
         calculate_W();
-        std::cout << "occupancy: %" << std::fixed << std::setprecision(3) << W * 100 << std::endl;
-        //show_grid();
-         
+        std::cout << "W: %" << std::fixed << std::setprecision(3) << W * 100 << std::endl;
+        if (W > max_W) {
+            max_W = W;
+            show_grid();
+        }
+
         
         if (fabs(W - 1) < 0.000001) {
             std::cout << "Finish!" << std::endl;
+            show_grid();
             break;
         }
 
-        if (time_step > 300) {
+        if (time_step > 100) {
             std::cout << "Time out!" << std::endl;
+            show_grid();
             break;
         }
 
@@ -371,7 +385,7 @@ void Coordinator::simulate() {
                                                  this, std::ref(agent), std::ref(agent.bd_queue)));
             }
             else {
-                if (W < omega) {
+                if (W < 1 - omega) {
                     //choose the bd_ra_queue
                     threads.push_back(std::thread(&Coordinator::choose_next_position<std::priority_queue<LightGrid, std::vector<LightGrid>, BlueDescendRedAscendCompare>>, 
                                              this, std::ref(agent), std::ref(agent.bd_ra_queue)));
@@ -406,5 +420,12 @@ void Coordinator::simulate() {
 
         //update the time step.
         time_step++;
+        double end_time = clock();
+        mean_running_time += (end_time - start_time);
     }
+    //show max_w
+    std::cout << "max_W: %" << std::fixed << std::setprecision(3) << max_W * 100 << std::endl;
+    //show mean_running_time
+    std::cout << "mean_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step << std::endl;
+    std::cout << "mean_agent_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step / agents.size() << std::endl;
 }

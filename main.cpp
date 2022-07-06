@@ -7,6 +7,10 @@
 
 
 void do_something() {
+    for (int i = 3; i <= 7; i += 2) {
+        generate_x_cube(9, i);
+    }
+    
 }
 
 int main(int argc, char* argv[]) {

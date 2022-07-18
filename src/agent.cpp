@@ -19,5 +19,6 @@ void Agent::output_action() {
             " to " <<
             "(" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
     }
+    
 }
 

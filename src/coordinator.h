@@ -46,7 +46,7 @@ public:
     //calculate the light intensity, p.25 of the paper.
     //"At any time t, each agent in O_t is a source of red light,
     // and each grid in U_t is a source of blue light. "
-    double L, beta, omega, W, gamma;
+    double L, beta, omega, W, gamma, alpha;
     bool flag;
 
     //calculate the portion of the occupied grid in the target shape.

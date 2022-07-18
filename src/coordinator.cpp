@@ -3,10 +3,11 @@
 Coordinator::Coordinator(GridEnvironment &grid_env) 
                                               : agent_num(grid_env.target_shape_num),
                                                 grid_env(grid_env),
+                                                alpha(1000000),
                                                 time_step(0), 
                                                 L(1000),
                                                 beta(1),
-                                                omega(0.2),
+                                                omega(0.15),
                                                 gamma(0.2)
 {
     //set the random seed.
@@ -256,10 +257,12 @@ void Coordinator::choose_next_position(Agent &agent, T& q, double delta) {
                     //e.g. current occupancy = 0.89, omega = 0.15, delta = 0.89 - (1-0.15) = 0.04
                     //the agent can leave the target at a rate of (0.15 - 0.04)/alpha = 0.11/alpha
 
-                    double alpha = 2;
                     double dice = (rand() % 1001)/1000.0;
-                    double can_leave_target_rate = (omega - delta)/3;
-                    if (dice > can_leave_target_rate) {
+                    double can_leave_target_rate = (omega - delta)/alpha;
+                    if (delta < 0) {
+                        //try to occupy the grid.
+                    }
+                    else if (dice > can_leave_target_rate) {
                         top_grid.lock.unlock();
                         continue;
                     }
@@ -353,18 +356,20 @@ void Coordinator::change_grid_state() {
 
 void Coordinator::simulate() {
     double max_W = 0;
+    int max_W_index = 0;
     //calculate the mean running time of each iteration.
     double mean_running_time = 0;
     while (true) {
         double start_time = clock();
-        std::cout << "----------------------" << std::endl;
-        std::cout << "time step: " << time_step << std::endl;
-        std::cout << "----------------------" << std::endl;
+        //std::cout << "----------------------" << std::endl;
+        //std::cout << "time step: " << time_step ; // << std::endl;
+        //std::cout << "----------------------" << std::endl;
         calculate_W();
-        std::cout << "W: %" << std::fixed << std::setprecision(3) << W * 100 << std::endl;
+        //std::cout << " W: %" << std::fixed << std::setprecision(3) << W * 100 << std::endl;
         if (W > max_W) {
             max_W = W;
-            show_grid();
+            max_W_index = time_step;
+            //show_grid();
         }
 
         
@@ -374,7 +379,13 @@ void Coordinator::simulate() {
             break;
         }
 
-        if (time_step > 200) {
+        if (time_step > 100) {
+            std::cout << "Agents number: " << agents.size() << std::endl;
+            //show max_w
+            std::cout << "max_W: %" << std::fixed << std::setprecision(3) << max_W * 100 << " at time step: " << max_W_index << std::endl;
+            //show mean_running_time
+            std::cout << "mean_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step << std::endl;
+            std::cout << "mean_agent_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step / agents.size() << std::endl;
             std::cout << "Time out!" << std::endl;
             show_grid();
             break;
@@ -441,9 +452,4 @@ void Coordinator::simulate() {
         double end_time = clock();
         mean_running_time += (end_time - start_time);
     }
-    //show max_w
-    std::cout << "max_W: %" << std::fixed << std::setprecision(3) << max_W * 100 << std::endl;
-    //show mean_running_time
-    std::cout << "mean_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step << std::endl;
-    std::cout << "mean_agent_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step / agents.size() << std::endl;
 }

@@ -10,9 +10,6 @@ Coordinator::Coordinator(GridEnvironment &grid_env)
                                                 omega(0.15),
                                                 gamma(0.2)
 {
-    //set the random seed.
-    srand(time(NULL));
-    //srand(17);
 
     //initialize the agents.
     for (int i = 0; i < agent_num; i++) {
@@ -47,18 +44,36 @@ Coordinator::Coordinator(GridEnvironment &grid_env)
 
 //show the grid and the agents.
 void Coordinator::show_grid() {
+    //std::cout << "----------------------" << std::endl;
+    //std::cout << "grid:" << std::endl;
+    //grid_env.show();
     std::cout << "----------------------" << std::endl;
-    std::cout << "grid:" << std::endl;
-    grid_env.show();
-    std::cout << "----------------------" << std::endl;
-    std::cout << "agents:" << std::endl;
+    //std::cout << "agents:" << std::endl;
     for (int i = 0; i < grid_env.grid_size_x; i++) {
         for (int j = 0; j < grid_env.grid_size_y; j++) {
             for (int k = 0; k < grid_env.grid_size_z; k++) {
                 if (this->grid_env.grid[i][j][k].is_occupied) {
-                    std::cout << "X" << " ";
+                    std::cout << "." << " ";
                 } else {
                     std::cout << "0" << " ";
+                }
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+}
+
+
+void Coordinator::show_lock() {
+    std::cout << "----------------------" << std::endl;
+    for (int i = 0; i < grid_env.grid_size_x; i++) {
+        for (int j = 0; j < grid_env.grid_size_y; j++) {
+            for (int k = 0; k < grid_env.grid_size_z; k++) {
+                if (this->grid_env.grid[i][j][k].is_locked) {
+                    std::cout << "X" << " ";
+                } else {
+                    std::cout << "O" << " ";
                 }
             }
             std::cout << std::endl;
@@ -170,7 +185,7 @@ void Coordinator::show_light_field(Agent &agent) {
                  std::cout << "agent: (" << agent.position.x << ", " << agent.position.y << ", " << agent.position.z << ")" << std::endl; 
     std::cout << "----------------------" << std::endl;
     std::cout << "blue light: " << std::endl;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 1; i++) {
         for (int j = 0; j < 3; j++) {
             for (int k = 0; k < 3; k++) {
                 std::cout << std::fixed << std::setprecision(2) << 
@@ -183,7 +198,7 @@ void Coordinator::show_light_field(Agent &agent) {
 
     std::cout << "----------------------" << std::endl;
     std::cout << "red light: " << std::endl;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 1; i++) {
         for (int j = 0; j < 3; j++) {
             for (int k = 0; k < 3; k++) {
                 std::cout << std::fixed << std::setprecision(2) << 
@@ -230,8 +245,7 @@ template <typename T>
 void Coordinator::choose_next_position(Agent &agent, T& q, double delta) {
     //this function only change the agent's next_position and the grid's is_locked.
     //initialize the light grid
-    auto candidate_pos = Position(-1, -1, -1);
-    agent.next_position = candidate_pos;    //initialize the next_position to -1,-1,-1.
+    auto candidate_pos = agent.position;
 
     if (q.empty()) {
         agent.next_position = agent.position;
@@ -250,24 +264,13 @@ void Coordinator::choose_next_position(Agent &agent, T& q, double delta) {
             }
             else {
                 if (!top_grid.is_target) {
-                    //delta: the result of {current occupancy - (1-omega)}
-                    //when delta < 0, can leave the target;
-                    //when delta > 0 (delta max: omega), 
-                    //the agent can leave the target at a rate of (omega - delta)/alpha.
-                    //e.g. current occupancy = 0.89, omega = 0.15, delta = 0.89 - (1-0.15) = 0.04
-                    //the agent can leave the target at a rate of (0.15 - 0.04)/alpha = 0.11/alpha
-
-                    double dice = (rand() % 1001)/1000.0;
-                    double can_leave_target_rate = (omega - delta)/alpha;
-                    if (delta < 0) {
+                    if (agent.is_in_target == false) {
                         //try to occupy the grid.
-                    }
-                    else if (dice > can_leave_target_rate) {
-                        top_grid.lock.unlock();
-                        continue;
                     }
                     else {
-                        //try to occupy the grid.
+                        //cannot leave the target.
+                        top_grid.lock.unlock();
+                        continue;
                     }
                 }
 
@@ -277,12 +280,11 @@ void Coordinator::choose_next_position(Agent &agent, T& q, double delta) {
                 top_grid.lock.unlock();
 
                 //if we have a candidate position, we need to change the state of the grid.
-                if (candidate_pos.x != -1) {
-                    Grid &candidate_grid = grid_env.grid[candidate_pos.x][candidate_pos.y][candidate_pos.z];
-                    candidate_grid.lock.lock();
-                    candidate_grid.is_locked = false;
-                    candidate_grid.lock.unlock();
-                }
+                Grid &candidate_grid = grid_env.grid[candidate_pos.x][candidate_pos.y][candidate_pos.z];
+                candidate_grid.lock.lock();
+                candidate_grid.is_locked = false;
+                candidate_grid.lock.unlock();
+      
 
                 //generate a random number between [0, 1], to compare with the gamma.;
                 double p = (rand() % 11)/10.0;
@@ -292,21 +294,13 @@ void Coordinator::choose_next_position(Agent &agent, T& q, double delta) {
                 }
                 else {
                     agent.next_position = top.position;
-                    Grid &left_grid = grid_env.grid[agent.position.x][agent.position.y][agent.position.z];
-                    left_grid.lock.lock();
-                    left_grid.is_locked = false;
-                    left_grid.lock.unlock();
                     return;
                 }
             }
         }
-        //there is no more candidate position.
-        if (candidate_pos.x != -1) {
-            agent.next_position = candidate_pos;
-        }
-        else {
-            agent.next_position = agent.position;
-        }
+        agent.next_position = candidate_pos;
+
+        
     }
 
 }
@@ -323,14 +317,14 @@ void Coordinator::move_to_next_position(Agent &agent) {
 
         agent.actions.push_back(1);
         agent.path.push_back(agent.position);
+        agent.position = agent.next_position;
         if (grid_env.grid[agent.position.x][agent.position.y][agent.position.z].is_target) {
             agent.is_in_target = true;
         }
         else {
             agent.is_in_target = false;
         }
-
-        agent.position = agent.next_position;
+    
         return;
     }
 }
@@ -375,11 +369,16 @@ void Coordinator::simulate() {
         
         if (fabs(W - 1) < 0.000001) {
             std::cout << "Finish!" << std::endl;
-            show_grid();
+            std::cout << "Agents number: " << agents.size() << std::endl;
+            //show max_w
+            std::cout << "max_W: %" << std::fixed << std::setprecision(3) << max_W * 100 << " at time step: " << max_W_index << std::endl;
+            //show mean_running_time
+            std::cout << "mean_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step << std::endl;
+            std::cout << "mean_agent_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step / agents.size() << std::endl;
             break;
         }
 
-        if (time_step > 100) {
+        if (time_step > 150) {
             std::cout << "Agents number: " << agents.size() << std::endl;
             //show max_w
             std::cout << "max_W: %" << std::fixed << std::setprecision(3) << max_W * 100 << " at time step: " << max_W_index << std::endl;
@@ -387,7 +386,6 @@ void Coordinator::simulate() {
             std::cout << "mean_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step << std::endl;
             std::cout << "mean_agent_running_time: " << std::fixed << std::setprecision(3) << mean_running_time / time_step / agents.size() << std::endl;
             std::cout << "Time out!" << std::endl;
-            show_grid();
             break;
         }
 
@@ -451,5 +449,12 @@ void Coordinator::simulate() {
         time_step++;
         double end_time = clock();
         mean_running_time += (end_time - start_time);
+
+        //show_grid();
     }
+    show_grid();
+    //show_lock();
+    //for (auto &agent : agents) {
+    //    show_light_field(agent);
+    //}
 }

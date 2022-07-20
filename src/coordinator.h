@@ -6,6 +6,7 @@
 #include "time.h"
 #include "lightfield.h"
 #include "position.h"
+#include "assert.h"
 
 #include <vector>
 #include <random>
@@ -73,6 +74,9 @@ public:
 
     //simulate.
     void simulate();
+
+    //show lock
+    void show_lock();
 };
 
 
